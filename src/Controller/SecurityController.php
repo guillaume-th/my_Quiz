@@ -14,8 +14,13 @@ class SecurityController extends AbstractController
      */
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
-        if ($this->getUser()) {
-            return $this->redirectToRoute('index');
+        $user = $this->getUser();
+        // var_dump($user);
+
+        if ($user) {
+            if ($user->isVerified()) {
+                return $this->redirectToRoute('index');
+            }
         }
 
         // get the login error if there is one
