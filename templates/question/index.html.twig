@@ -1,40 +1,47 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Question index{% endblock %}
+{% block title %}Question index
+{% endblock %}
 
 {% block body %}
-    <h1>Question index</h1>
+	{% block header %}
+		{{parent()}}
+	{% endblock %}
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Question</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for question in questions %}
-            <tr>
-                <td>{{ question.question }}</td>
-        <tbody>
-        {% for reponse in reponses %}
-            <tr>
-                <td>{{ reponse.reponse }}</td>
-                <td>
-                    <a href="{{ path('question_index', {'id': question.id+1} )}}">next</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="5">no records found</td>
-            </tr>
-        {% endfor %}
-    
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="4">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+	<div class="wrapper">
+		<h1>Question index</h1>
+
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Question</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for question in questions %}
+					<tr>
+						<td>{{ question.question }}</td>
+						<tbody>
+							{% for reponse in reponses %}
+								<tr>
+									<td>{{ reponse.reponse }}</td>
+									<td>
+										<a href="{{ path('question_index', {'id': question.id+1} )}}">next</a>
+									</td>
+								</tr>
+							{% else %}
+								<tr>
+									<td colspan="5">no records found</td>
+								</tr>
+							{% endfor %}
+						</tbody>
+					</tr>
+				{% else %}
+					<tr>
+						<td colspan="4">no records found</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
 {% endblock %}
