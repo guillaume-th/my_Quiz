@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}User
+{% endblock %}
+
+{% block body %}
+	{% block header %}
+		{{parent()}}
+	{% endblock %}
+
+	<div class="wrapper">
+		{% if user %}
+			<h1>{{user.email}}</h1>
+
+			{# <table class="table">
+				<tbody>
+					<tr>
+						<th>Id</th>
+						<td>{{ user.id }}</td>
+					</tr>
+					<tr>
+						<th>Email</th>
+						<td>{{ user.email }}</td>
+					</tr>
+					<tr>
+						<th>Roles</th>
+						<td>{{ user.roles ? user.roles|json_encode : '' }}</td>
+					</tr>
+					<tr>
+						<th>Password</th>
+						<td>{{ user.password }}</td>
+					</tr>
+					<tr>
+						<th>IsVerified</th>
+						<td>{{ user.isVerified ? 'Yes' : 'No' }}</td>
+					</tr>
+				</tbody>
+			</table> #}
+			<a class="btn" href="{{ path('user_edit', {'id': user.id}) }}">edit</a>
+			{# {{ include('user/_delete_form.html.twig') }} #}
+		{% else %}
+			<h1>Guest User</h1>
+			<p>You are connected as guest. Create an <a href={{path('app_register')}}><strong>account</strong></a> or <a href={{path('app_login')}}><strong>login</strong></a>.<p>
+		{% endif %}
+			<div class="stats">
+			<h2>Statistics</h2>
+				{% for stat in stats %}
+
+				{% endfor %}
+			</div>
+	</div>
+{% endblock %}

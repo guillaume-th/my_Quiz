@@ -1,34 +1,32 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Categorie index{% endblock %}
+{% block title %}Quiz
+{% endblock %}
 
 {% block body %}
-    <h1>Categorie index</h1>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Name</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for categorie in categories %}
-            <tr>
-                <td>{{ categorie.id }}</td>
-                <td>{{ categorie.name }}</td>
-                <td>
-                    <a href="{{ path('question_index', {'id': categorie.id}) }}">show</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="3">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+	{% block header %}
+		{{parent()}}
+	{% endblock %}
+	<div class="wrapper">
+		<h3>Categories</h3>
 
-    <a href="{{ path('categorie_new') }}">Create new</a>
+		<div class="categories">
+			<div class="cat-names">
+				<div class="cat-list">
+					{% for categorie in categories %}
+						<div class="card">
+							<p>{{ categorie.name }}</p>
+							<a class="link" href="{{ path('question_index', {'id': categorie.id}) }}">Take the quizz &#8594;</a>
+						</div>
+					{% else %}
+						<p colspan="3">no records found</p>
+					{% endfor %}
+
+				</div>
+			</div>
+
+		</div>
+		<a href="{{ path('categorie_new') }}">Create new</a>
+	</div>
 {% endblock %}

@@ -3,8 +3,8 @@
 {% block title %}Register{% endblock %}
 
 {% block body %}
-    {% for flashError in app.flashes('verify_email_error') %}
+    {# {% for flashError in app.flashes('verify_email_error') %}
         <div class="alert alert-danger" role="alert">{{ flashError }}</div>
-    {% endfor %}
-    {# <p>Wait for confirmation email</p> #}
+    {% endfor %} #}
+    <p>Wait for confirmation email or click on the link you received.</p>
 {% endblock %}

@@ -1,3 +1,145 @@
-body{
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500&display=swap');
+body {
     background-color: antiquewhite;
+    font-family: Roboto, sans-serif;
+    font-size: 1.25rem;
+    padding: 1rem 10rem;
+    box-sizing: border-box;
+}
+
+* {
+    padding: .5rem;
+    margin: 1rem;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+h1{
+    font-size: 2rem;
+    margin : 2.5rem 1rem; 
+}
+
+h2{
+    font-size: 1.75rem;
+    margin : 2.5rem 1rem; 
+}
+
+
+h3 {
+    font-size: 2rem;
+}
+
+strong{
+    font-weight: bold;
+}
+
+/* NAV */
+
+.wrapper {
+    margin-top: 6.5rem;
+}
+
+header {
+    background-color: lightcoral;
+    padding: 1rem;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 50;
+}
+
+header img {
+    height: 4rem;
+}
+
+nav {
+    display: flex;
+    gap: 1.5rem;
+    font-weight: bold;
+}
+
+nav a {
+    border-radius: .25rem;
+    color: white;
+    padding: 1rem;
+    transition: background-color .25s ease;
+}
+
+nav a:hover {
+    background-color: rgb(214, 90, 90);
+}
+
+.btn, button{
+    border : none; 
+    border-radius: .25rem;
+    padding : .75rem; 
+    font-size : 1rem;
+    text-transform: uppercase;
+    cursor: pointer;
+    background : radial-gradient(#76b2fe, #b69efe);
+    transition: all 0.2s;
+}
+
+.btn:hover, button:hover{
+    box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.4);
+    transform: scale(1.01);
+}
+
+/* CARDS */
+
+.cat-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-top: 5rem;
+}
+
+.card {
+    margin: 20px;
+    padding: 20px;
+    width: 300px;
+    min-height: 200px;
+    display: grid;
+    grid-template-rows: 20px 50px 1fr 50px;
+    border-radius: 10px;
+    box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.25);
+    transition: all 0.2s;
+    background: radial-gradient(#76b2fe, #b69efe);
+}
+
+.card:hover {
+    box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.4);
+    transform: scale(1.01);
+}
+
+.link {
+    position: relative;
+    text-decoration: none;
+    color: rgba(255, 255, 255, 0.9);
+    width: max-content;
+    font-size: 1rem;
+}
+
+.link::after {
+    position: absolute;
+    top: 25px;
+    left: 0;
+    content: "";
+    width: 0%;
+    height: 3px;
+    background-color: rgba(255, 255, 255, 0.6);
+    transition: all 0.5s;
+}
+
+.link:hover::after {
+    width: 100%;
 }

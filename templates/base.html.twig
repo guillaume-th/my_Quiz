@@ -6,8 +6,25 @@
 			{% block title %}Welcome!
 			{% endblock %}
 		</title>
-		<link rel="stylesheet" type="text/css" href={{ asset("/style.css")}}>
+		<link rel="stylesheet" type="text/css" href={{ asset("/reset.css")}}>
         </link>
+		<link rel="stylesheet" type="text/css" href={{ asset("/style.css")}}>
+	</link>
     </head>
-    <body>{% block body %}{% endblock %}</body>
+    <body>{% block body %}
+		{% block header %}
+		<header>
+			<img src={{asset("/play.png")}}></img>
+			<nav>
+				<a href={{ path('index') }}>Play</a>
+				{% if app.user %}
+					<a href={{ path('user_show', {id : app.user.id}) }}>Profile</a>
+				{% else %}
+					<a href={{ path('user_show_guest')}}>Profile</a>
+				{% endif %}
+
+			</nav>
+		</header>
+{% endblock %}
+	{% endblock %}</body>
 </html>
