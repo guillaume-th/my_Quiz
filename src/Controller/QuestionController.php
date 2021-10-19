@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Reponse;
 use App\Entity\Categorie;
 use App\Entity\Question;
 use App\Form\QuestionType;
@@ -18,14 +19,22 @@ class QuestionController extends AbstractController
     /**
      * @Route("/{id}", name="question_index", methods={"GET"})
      */
-    public function index(Categorie $categories): Response
+    public function index(Question $question): Response
     {
         $questions = $this->getDoctrine()
             ->getRepository(Question::class)
-            ->findBy(["idCategorie" => $categories]);
-
+            ->findBy([
+                "idCategorie" => $question->idCategorie,
+                "id" => $question->id,
+            ]);
+            $reponses = $this->getDoctrine()
+            ->getRepository(Reponse::class)
+            ->findBy([
+                "idQuestion" => $question->id,
+            ]);
         return $this->render('question/index.html.twig', [
             'questions' => $questions,
+            'reponses' => $reponses,
         ]);
     }
 
@@ -78,7 +87,7 @@ class QuestionController extends AbstractController
      */
     public function delete(Request $request, Question $question): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$question->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $question->getId(), $request->request->get('_token'))) {
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($question);
             $entityManager->flush();
