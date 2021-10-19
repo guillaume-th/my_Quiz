@@ -8,19 +8,27 @@
     <table class="table">
         <thead>
             <tr>
-                <th>Id</th>
-                <th>IdCategorie</th>
                 <th>Question</th>
-                <th>actions</th>
             </tr>
         </thead>
         <tbody>
         {% for question in questions %}
             <tr>
-                <td>{{ question.id }}</td>
-                <td>{{ question.idCategorie }}</td>
                 <td>{{ question.question }}</td>
-  
+        <tbody>
+        {% for reponse in reponses %}
+            <tr>
+                <td>{{ reponse.reponse }}</td>
+                <td>
+                    <a href="{{ path('question_index', {'id': question.id+1} )}}">next</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">no records found</td>
+            </tr>
+        {% endfor %}
+    
             </tr>
         {% else %}
             <tr>
@@ -29,6 +37,4 @@
         {% endfor %}
         </tbody>
     </table>
-
-    <a href="{{ path('question_new') }}">Create new</a>
 {% endblock %}

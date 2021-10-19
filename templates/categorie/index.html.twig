@@ -20,6 +20,7 @@
                 <td>{{ categorie.name }}</td>
                 <td>
                     <a href="{{ path('question_index', {'id': categorie.id}) }}">show</a>
+                    <a href="{{ path('categorie_edit', {'id': categorie.id}) }}">edit</a>
                 </td>
             </tr>
         {% else %}
