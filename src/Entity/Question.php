@@ -19,21 +19,21 @@ class Question
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private $id;
+    public $id;
 
     /**
      * @var int|null
      *
      * @ORM\Column(name="id_categorie", type="integer", nullable=true)
      */
-    private $idCategorie;
+    public $idCategorie;
 
     /**
      * @var string|null
      *
      * @ORM\Column(name="question", type="string", length=255, nullable=true)
      */
-    private $question;
+    public $question;
 
 
 }

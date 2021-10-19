@@ -9,12 +9,14 @@
 </style>
 
 <div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
+    <h1>Home</h1>
 
-    This friendly message is coming from:
+    choose your theme
     <ul>
-        <li>Your controller at <code><a href="{{ '/home/jemleym/quiz-symfony/my_quizz/src/Controller/IndexController.php'|file_link(0) }}">src/Controller/IndexController.php</a></code></li>
-        <li>Your template at <code><a href="{{ '/home/jemleym/quiz-symfony/my_quizz/templates/index/index.html.twig'|file_link(0) }}">templates/index/index.html.twig</a></code></li>
+        <li><code><a href="{{ path('categorie_new') }}">quizz</a></code></li>
+        <li><code><a href="{{ path('index') }}">quiz_1</a></code></li>
+        <li><code><a href="{{ path('index') }}">quiz_1</a></code></li>
+        <li><code><a href="{{ path('index') }}">quiz_1</a></code></li>
     </ul>
 </div>
 {% endblock %}

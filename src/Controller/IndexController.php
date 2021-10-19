@@ -9,12 +9,28 @@ use Symfony\Component\Routing\Annotation\Route;
 class IndexController extends AbstractController
 {
     /**
-     * @Route("/index", name="index")
+     * @Route("/", name="index")
      */
     public function index(): Response
     {
+        return $this->redirectToRoute('categorie_index');
+    }
+    /**
+     * @Route("/autre", name="home")
+     */
+    public function home(): Response
+    {
+        /**
+         * @ORM\id()
+         * @ORM\GeneratedValue()
+         * @ORM\Column(type="question")
+         */
+        // private $id;
         return $this->render('index/index.html.twig', [
-            'controller_name' => 'IndexController',
+            // $em = $this->getDoctrine()->getManager();
+            // $tableName = $em->getClassMetadata('StoreBundle:User')->getTableName();
+            'quiz_name' => 'hello',
         ]);
+
     }
 }
