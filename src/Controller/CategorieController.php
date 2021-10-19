@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Categorie;
 use App\Form\CategorieType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -33,22 +34,27 @@ class CategorieController extends AbstractController
      */
     public function new(Request $request): Response
     {
-        $categorie = new Categorie();
-        $form = $this->createForm(CategorieType::class, $categorie);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($categorie);
-            $entityManager->flush();
-
-            return $this->redirectToRoute('categorie_index', [], Response::HTTP_SEE_OTHER);
+        $this->denyAccessUnlessGranted("IS_AUTHENTICATED_FULLY");
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        if($user->isVerified()){
+            $categorie = new Categorie();
+            $form = $this->createForm(CategorieType::class, $categorie);
+            $form->handleRequest($request);
+    
+            if ($form->isSubmitted() && $form->isValid()) {
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->persist($categorie);
+                $entityManager->flush();
+    
+                return $this->redirectToRoute('categorie_index', [], Response::HTTP_SEE_OTHER);
+            }
+    
+            return $this->renderForm('categorie/new.html.twig', [
+                'categorie' => $categorie,
+                'form' => $form,
+            ]);
         }
-
-        return $this->renderForm('categorie/new.html.twig', [
-            'categorie' => $categorie,
-            'form' => $form,
-        ]);
+        return $this->redirectToRoute("app_verify_wait"); 
     }
 
     /**
