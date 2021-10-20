@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>
+			{% block title %}Admin
+			{% endblock %}
+		</title>
+		<link rel="stylesheet" type="text/css" href={{ asset("/reset.css")}}>
+        </link>
+		<link rel="stylesheet" type="text/css" href={{ asset("/style.css")}}>
+	</link>
+    </head>
+    <body>{% block body %}
+		{% block header %}
+		<header>
+			<a href={{ path('admin_index') }}><img src={{asset("/play.png")}}></img></a>
+			<nav>
+				<a href={{ path('admin_users') }}>Users</a>
+                <a href={{ path('admin_quizzes') }}>Quizzes</a>
+                <a href={{ path('admin_statistiques') }}>Statistiques</a>
+			</nav>
+		</header>
+{% endblock %}
+	{% endblock %}</body>
+</html>
