@@ -38,6 +38,7 @@ class Categorie
     public function __construct()
     {
         $this->historiqueQuizzs = new ArrayCollection();
+        $this->question = new ArrayCollection();
     }
 
     /**
@@ -69,6 +70,5 @@ class Categorie
 
         return $this;
     }
-
 
 }

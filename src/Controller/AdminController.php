@@ -69,6 +69,7 @@ class AdminController extends AbstractController
 
     private function testAdmin()
     {
+        
         $user = $this->get('security.token_storage')->getToken()->getUser();
         if (in_array('ROLE_ADMIN', $user->getRoles())) {
             return true;

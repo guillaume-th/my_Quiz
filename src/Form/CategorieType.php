@@ -14,11 +14,6 @@ class CategorieType extends AbstractType
     {
         $builder
             ->add('name');
-
-        $builder->add("questions", CollectionType::class, [
-            "entry_type" => Question::class, 
-            "entry_options"=>["label" => false]
-        ])
     }
 
     public function configureOptions(OptionsResolver $resolver): void
