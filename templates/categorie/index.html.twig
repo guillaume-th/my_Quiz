@@ -17,7 +17,7 @@
 					{% for categorie in categories %}
 						<div class="card">
 							<p>{{ categorie.name }}</p>
-							<a class="link" href="{{ path('question_index', {'id': categorie.id}) }}">Take the quizz &#8594;</a>
+							<a class="link" href="{{ path('question_index', {'id': categorie.id} ) }}">Take the quizz &#8594;</a>
 						</div>
 					{% else %}
 						<p colspan="3">no records found</p>

@@ -63,6 +63,7 @@ class UserController extends AbstractController
     public function show(User $user): Response
     {
         $stats = [];
+        $stats = $user->getHistoriqueQuizzs(); 
 
         return $this->render('user/show.html.twig', [
             'user' => $user,
@@ -76,6 +77,9 @@ class UserController extends AbstractController
     public function showGuest(): Response
     {
         $stats = [];
+        if(isset($_COOKIE["history"])){
+            $stats = $_COOKIE["history"];
+        }
         return $this->render('user/show.html.twig', [
             'user' => NULL,
             "stats" => $stats
