@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}HistoriqueQuizz index{% endblock %}
+
+{% block body %}
+    <h1>HistoriqueQuizz index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Score</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for historique_quizz in historique_quizzs %}
+            <tr>
+                <td>{{ historique_quizz.id }}</td>
+                <td>{{ historique_quizz.score }}</td>
+                <td>
+                    <a href="{{ path('historique_quizz_show', {'id': historique_quizz.id}) }}">show</a>
+                    <a href="{{ path('historique_quizz_edit', {'id': historique_quizz.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('historique_quizz_new') }}">Create new</a>
+{% endblock %}
