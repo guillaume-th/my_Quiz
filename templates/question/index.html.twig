@@ -18,15 +18,13 @@
 				</tr>
 			</thead>
 			<tbody>
-				{% for question in questions %}
 					<tr>
-						<td>{{ question.question }}</td>
+						<td>{{ questions.question }}</td>
 						<tbody>
 							{% for reponse in reponses %}
 								<tr>
-									<td>{{ reponse.reponse }}</td>
 									<td>
-										<a href="{{ path('question_index', {'id': question.id+1} )}}">next</a>
+										<a href="{{ path('question_index', {'idQuestion': questions.id+1, 'id' : questions.idCategorie , 'count' : reponse.id})}}">{{ reponse.reponse }}</a>
 									</td>
 								</tr>
 							{% else %}
@@ -36,11 +34,6 @@
 							{% endfor %}
 						</tbody>
 					</tr>
-				{% else %}
-					<tr>
-						<td colspan="4">no records found</td>
-					</tr>
-				{% endfor %}
 			</tbody>
 		</table>
 	</div>

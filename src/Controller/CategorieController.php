@@ -23,7 +23,6 @@ class CategorieController extends AbstractController
         $categories = $this->getDoctrine()
             ->getRepository(Categorie::class)
             ->findAll();
-
         return $this->render('categorie/index.html.twig', [
             'categories' => $categories,
         ]);
