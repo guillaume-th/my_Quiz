@@ -16,26 +16,60 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class QuestionController extends AbstractController
 {
+    private static $countscore = 0;
     /**
-     * @Route("/{id}", name="question_index", methods={"GET"})
+     * @Route("/{id}/{idQuestion}/{count}", name="question_index", methods={"GET"})
      */
-    public function index(Question $question): Response
+    public function index($id, $idQuestion = NULL , $count=null): Response
     {
-        $questions = $this->getDoctrine()
-            ->getRepository(Question::class)
-            ->findBy([
-                "idCategorie" => $question->idCategorie,
-                "id" => $question->id,
+        if($count!=null){
+            $score = $this->getDoctrine()
+                ->getRepository(Reponse::class)
+                ->findOneBy([
+                    "id" => $id,
+                ]);
+                var_dump($score->reponseExpected);
+                if($score->reponseExpected==true){
+                    self::$countscore++;
+                }
+                var_dump(self::$countscore);
+        }
+        if ($idQuestion == NULL) {
+            $question = $this->getDoctrine()
+                ->getRepository(Question::class)
+                ->findOneBy([
+                    "idCategorie" => $id,
+                ]);
+        }
+        else{
+            $question = $this->getDoctrine()
+                ->getRepository(Question::class)
+                ->findOneBy([
+                    "idCategorie" => $id,
+                    "id" => $idQuestion
+                ]);
+        }
+        if($question == NULL){
+            return $this->render('question/score.html.twig', [
+                'count' => $count,
+                'categorie' => $id,
             ]);
+            
+        }
+        else{
             $reponses = $this->getDoctrine()
             ->getRepository(Reponse::class)
             ->findBy([
                 "idQuestion" => $question->id,
             ]);
         return $this->render('question/index.html.twig', [
-            'questions' => $questions,
+            'questions' => $question,
             'reponses' => $reponses,
+            '$count' => $count,
+
         ]);
+        }
+        
     }
 
     /**

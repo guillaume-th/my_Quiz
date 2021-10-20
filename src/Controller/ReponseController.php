@@ -53,7 +53,7 @@ class ReponseController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", name="reponse_show", methods={"GET"})
+     * @Route("/{id}}", name="reponse_show", methods={"GET"})
      */
     public function show(Reponse $reponse): Response
     {
