@@ -45,10 +45,10 @@ class CategorieController extends AbstractController
                 $entityManager = $this->getDoctrine()->getManager();
                 $entityManager->persist($categorie);
                 $entityManager->flush();
+                $id = $this->getDoctrine()->getRepository(Categorie::class)->findBy(array(),array('id'=>'DESC'),1,0);
     
-                return $this->redirectToRoute('categorie_index', [], Response::HTTP_SEE_OTHER);
+                return $this->redirectToRoute('question/new.html.twig', ["id" => $id], Response::HTTP_SEE_OTHER);
             }
-    
             return $this->renderForm('categorie/new.html.twig', [
                 'categorie' => $categorie,
                 'form' => $form,
@@ -93,7 +93,7 @@ class CategorieController extends AbstractController
      */
     public function delete(Request $request, Categorie $categorie): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$categorie->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete'.$categorie->id, $request->request->get('_token'))) {
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($categorie);
             $entityManager->flush();

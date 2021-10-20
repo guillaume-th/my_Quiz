@@ -59,6 +59,13 @@ header {
 
 header img {
     height: 4rem;
+    transform : rotate(90deg);
+    transition: all .15s ease;
+    cursor : pointer;
+}
+
+header img:hover{
+    transform : rotate(0deg); 
 }
 
 nav {
