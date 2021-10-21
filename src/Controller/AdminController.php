@@ -67,13 +67,17 @@ class AdminController extends AbstractController
      */
     public function showUser(User $user): Response
     {
-        $stats = [];
-        $stats = $user->getHistoriqueQuizzs(); 
-
-        return $this->render('admin/showUser.html.twig', [
-            'user' => $user,
-            "stats" => $stats
-        ]);
+        if ($this->testAdmin()) {
+            $stats = [];
+            $stats = $user->getHistoriqueQuizzs(); 
+    
+            return $this->render('admin/showUser.html.twig', [
+                'user' => $user,
+                "stats" => $stats
+            ]);
+        } else {
+            return $this->redirectToRoute("categorie_index");
+        }
     }
 
     /**
@@ -81,40 +85,43 @@ class AdminController extends AbstractController
      */
     public function edit(Request $request, User $user, UserPasswordHasherInterface $userPasswordHasherInterface): Response
     {
-        
-        $form = $this->createForm(UserType::class, $user);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-
-            $user->setPassword(
-                $userPasswordHasherInterface->hashPassword(
+        if ($this->testAdmin()) {
+            $form = $this->createForm(UserType::class, $user);
+            $form->handleRequest($request);
+    
+            if ($form->isSubmitted() && $form->isValid()) {
+    
+                $user->setPassword(
+                    $userPasswordHasherInterface->hashPassword(
+                        $user,
+                        $form->get('password')->getData()
+                    )
+                );
+    
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->persist($user);
+                $entityManager->flush();
+    
+                $this->emailVerifier->sendEmailConfirmation(
+                    'app_verify_email',
                     $user,
-                    $form->get('password')->getData()
-                )
-            );
-
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($user);
-            $entityManager->flush();
-
-            $this->emailVerifier->sendEmailConfirmation(
-                'app_verify_email',
-                $user,
-                (new TemplatedEmail())
-                    ->from(new Address('quiz@gmail.com', 'QuizBot'))
-                    ->to($user->getEmail())
-                    ->subject('Please Confirm your Email')
-                    ->htmlTemplate('registration/confirmation_email.html.twig')
-            );
-
-            return $this->redirectToRoute('app_verify_wait', [], Response::HTTP_SEE_OTHER);
+                    (new TemplatedEmail())
+                        ->from(new Address('quiz@gmail.com', 'QuizBot'))
+                        ->to($user->getEmail())
+                        ->subject('Please Confirm your Email')
+                        ->htmlTemplate('registration/confirmation_email.html.twig')
+                );
+    
+                return $this->redirectToRoute('app_verify_wait', [], Response::HTTP_SEE_OTHER);
+            }
+    
+            return $this->renderForm('admin/editUser.html.twig', [
+                'user' => $user,
+                'form' => $form,
+            ]);
+        } else {
+            return $this->redirectToRoute("categorie_index");
         }
-
-        return $this->renderForm('admin/editUser.html.twig', [
-            'user' => $user,
-            'form' => $form,
-        ]);
     }
 
     /**
