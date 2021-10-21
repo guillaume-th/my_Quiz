@@ -17,7 +17,7 @@ class Categorie
     /**
      * @var int
      *
-     * @ORM\Column(name="id", type="integer", nullable=false)
+     * @ORM\Column(name="id", type="integer", nullable=true, options={"default" : NULL})
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
@@ -26,7 +26,7 @@ class Categorie
     /**
      * @var string
      *
-     * @ORM\Column(name="name", type="string", length=100, nullable=false)
+     * @ORM\Column(name="name", type="string", length=100, nullable=true, options={"default" : NULL})
      */
     public $name;
 
@@ -35,10 +35,16 @@ class Categorie
      */
     private $historiqueQuizzs;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Question::class, mappedBy="categorie")
+     */
+    private $categorie= NULL;
+
     public function __construct()
     {
         $this->historiqueQuizzs = new ArrayCollection();
         $this->question = new ArrayCollection();
+        $this->categorie = new ArrayCollection();
     }
 
     /**
@@ -69,6 +75,41 @@ class Categorie
         }
 
         return $this;
+    }
+
+    /**
+     * @return Collection|Question[]
+     */
+    public function getCategorie(): Collection
+    {
+        return $this->categorie;
+    }
+
+    public function addCategorie(Question $categorie): self
+    {
+        if (!$this->categorie->contains($categorie)) {
+            $this->categorie[] = $categorie;
+            $categorie->setCategorie($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCategorie(Question $categorie): self
+    {
+        if ($this->categorie->removeElement($categorie)) {
+            // set the owning side to null (unless already changed)
+            if ($categorie->getCategorie() === $this) {
+                $categorie->setCategorie(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function __toString(): string
+    {
+        return 'categorie';
     }
 
 }
