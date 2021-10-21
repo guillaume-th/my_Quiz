@@ -56,6 +56,17 @@ header {
     left: 0;
     z-index: 50;
 }
+/* 
+.log{
+    max-height : 40px; 
+    width : 120px;
+} */
+
+.left-header{
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
 
 header img {
     height: 4rem;
@@ -168,4 +179,5 @@ nav a:hover {
 .quest-single-div{
     display: block;
 }
+
 
