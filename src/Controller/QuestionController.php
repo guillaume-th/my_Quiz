@@ -8,6 +8,7 @@ use App\Entity\Question;
 use App\Entity\HistoriqueQuizz;
 use App\Controller\HistoriqueQuizzController;
 use App\Form\QuestionType;
+use Symfony\Component\HttpFoundation\Cookie; 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -81,7 +82,12 @@ class QuestionController extends AbstractController
         }
         if ($question == NULL) {
             $count = $session->get('countscore');
-            // $this->setScore($score, $id);
+            $cat = $this->getDoctrine()
+            ->getRepository(Categorie::class)
+            ->findOneBy([
+                "id" => $id,
+            ]);
+            $this->setScore($count, $cat);
             return $this->render('question/score.html.twig', [
                 'count' => $count,
                 'categorie' => $id,
@@ -107,8 +113,9 @@ class QuestionController extends AbstractController
      */
     public function setScore($score, Categorie $categorie)
     {
-        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $user = $this->get('security.token_storage')->getToken();
         if ($user) {
+            $user = $user->getUser(); 
             $history = new HistoriqueQuizz();
 
             $history->setScore($score);
@@ -118,12 +125,20 @@ class QuestionController extends AbstractController
             $entityManager->persist($history);
             $entityManager->flush();
         } else {
+            // $value = "score:$score;categorie:$categorie->id;"
             $value = [
+                "categorie" => $categorie->id,
                 "score" => $score,
-                "categorie" => $categorie,
                 "user" => "guest"
             ];
-            setcookie("history", $value, time() + 2 * 24 * 60 * 60);
+
+            // $cookie = Cookie::create("history")
+            // ->withValue(json_encode($value))
+            // ->withExpires(time() + 2 * 24 * 60 * 60) 
+            // ->withDomain("quiz.com")
+            // ->withSecure(true); 
+            $cookie = new Cookie("history", json_encode($value), time() + 2 * 24 * 60 * 60);
+            // setcookie("history", json_encode($value), time() + 2 * 24 * 60 * 60);
         }
     }
 

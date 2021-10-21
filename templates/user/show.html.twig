@@ -46,7 +46,7 @@
 				<h2>Statistics</h2>
 					{% for stat in stats %}
 						<div class="stat">
-							{{stat.getCategorie()}} - 
+							{{stat.getCategorie().name}} - 
 							{{stat.getScore()}}/10
 						</div>
 					{% else %}
