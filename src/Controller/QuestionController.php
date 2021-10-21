@@ -9,30 +9,33 @@ use App\Form\QuestionType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
  * @Route("/question")
  */
 class QuestionController extends AbstractController
 {
-    private static $countscore = 0;
     /**
      * @Route("/{id}/{idQuestion}/{count}", name="question_index", methods={"GET"})
      */
-    public function index($id, $idQuestion = NULL , $count=null): Response
+    public function index($id, $idQuestion = NULL, $count = null): Response
     {
-        if($count!=null){
+        $session = new Session();
+        if ($count != null) {
             $score = $this->getDoctrine()
                 ->getRepository(Reponse::class)
                 ->findOneBy([
-                    "id" => $id,
+                    "id" => $count,
                 ]);
-                var_dump($score->reponseExpected);
-                if($score->reponseExpected==true){
-                    self::$countscore++;
-                }
-                var_dump(self::$countscore);
+            if ($score->reponseExpected == true) {
+            $session->set('countscore', $session->get('countscore')+1);
+            }
+        } else {
+            $session->start();
+            $session->set('countscore', 0);
         }
         if ($idQuestion == NULL) {
             $question = $this->getDoctrine()
@@ -40,8 +43,7 @@ class QuestionController extends AbstractController
                 ->findOneBy([
                     "idCategorie" => $id,
                 ]);
-        }
-        else{
+        } else {
             $question = $this->getDoctrine()
                 ->getRepository(Question::class)
                 ->findOneBy([
@@ -49,27 +51,25 @@ class QuestionController extends AbstractController
                     "id" => $idQuestion
                 ]);
         }
-        if($question == NULL){
+        if ($question == NULL) {
+            $count = $session->get('countscore');
             return $this->render('question/score.html.twig', [
                 'count' => $count,
                 'categorie' => $id,
             ]);
-            
-        }
-        else{
+        } else {
             $reponses = $this->getDoctrine()
-            ->getRepository(Reponse::class)
-            ->findBy([
-                "idQuestion" => $question->id,
-            ]);
-        return $this->render('question/index.html.twig', [
-            'questions' => $question,
-            'reponses' => $reponses,
-            '$count' => $count,
+                ->getRepository(Reponse::class)
+                ->findBy([
+                    "idQuestion" => $question->id,
+                ]);
+            return $this->render('question/index.html.twig', [
+                'questions' => $question,
+                'reponses' => $reponses,
+                '$count' => $count,
 
-        ]);
+            ]);
         }
-        
     }
 
     /**
