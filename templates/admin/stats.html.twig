@@ -5,10 +5,11 @@
 
 {% block body %}
 	{% block header %}
-		{{parent()}}
+	
 	{% endblock %}
 
 	<div class="wrapper">
 		<h1>Statistiques</h1>
+ <img src="https://quickchart.io/chart?c={type:'bar',data:{labels:['Aujourd hui','Cette Semaine', 'Ce Mois', 'Cette Annee'], datasets:[{label:'Nombre De Quiz fait',data:[12, 6, 5, 2, 12]}]}}">
 	</div>
 {% endblock %}

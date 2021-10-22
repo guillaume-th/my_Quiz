@@ -40,7 +40,7 @@ class AdminController extends AbstractController
     {
         if ($this->testAdmin()) {
             return $this->render('admin/stats.html.twig', [
-                'controller_name' => 'AdminController',
+                'quizz' => 'AdminController',
             ]);
         } else {
             return $this->redirectToRoute("categorie_index");
@@ -69,8 +69,8 @@ class AdminController extends AbstractController
     {
         if ($this->testAdmin()) {
             $stats = [];
-            $stats = $user->getHistoriqueQuizzs(); 
-    
+            $stats = $user->getHistoriqueQuizzs();
+
             return $this->render('admin/showUser.html.twig', [
                 'user' => $user,
                 "stats" => $stats
@@ -88,20 +88,20 @@ class AdminController extends AbstractController
         if ($this->testAdmin()) {
             $form = $this->createForm(UserType::class, $user);
             $form->handleRequest($request);
-    
+
             if ($form->isSubmitted() && $form->isValid()) {
-    
+
                 $user->setPassword(
                     $userPasswordHasherInterface->hashPassword(
                         $user,
                         $form->get('password')->getData()
                     )
                 );
-    
+
                 $entityManager = $this->getDoctrine()->getManager();
                 $entityManager->persist($user);
                 $entityManager->flush();
-    
+
                 $this->emailVerifier->sendEmailConfirmation(
                     'app_verify_email',
                     $user,
@@ -111,10 +111,10 @@ class AdminController extends AbstractController
                         ->subject('Please Confirm your Email')
                         ->htmlTemplate('registration/confirmation_email.html.twig')
                 );
-    
+
                 return $this->redirectToRoute('app_verify_wait', [], Response::HTTP_SEE_OTHER);
             }
-    
+
             return $this->renderForm('admin/editUser.html.twig', [
                 'user' => $user,
                 'form' => $form,
