@@ -1,0 +1,18 @@
+{% extends 'base_admin.html.twig' %}
+
+{% block title %}User
+{% endblock %}
+
+{% block body %}
+	{% block header %}
+		{{parent()}}
+	{% endblock %}
+
+	<div class="wrapper">
+        <h3>Send email to your users</h3>
+        <a href={{path("admin_email_last_month", {"connected" : "true"})}}>To users connected in the last month</a>
+        <br>
+        <a href={{path("admin_email_last_month", {"connected" : "false"})}}>To users not connected the last month</a>
+        
+    </div>
+{% endblock %}

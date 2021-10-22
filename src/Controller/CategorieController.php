@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Categorie;
 use App\Entity\Question;
+use App\Entity\User;
 use App\Entity\Reponse;
 use App\Form\CategorieType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -22,6 +23,16 @@ class CategorieController extends AbstractController
      */
     public function index(): Response
     {
+        $user = $this->get('security.token_storage')->getToken();
+        if($user){
+            $user=$user->getUser(); 
+            $entityManager = $this->getDoctrine()->getManager();
+            $user = $entityManager->getRepository(User::class)->find($user->getId());
+            $user->setLastLogin(new \DateTime('NOW'));
+            $entityManager->persist($user);
+            $entityManager->flush();
+        }
+
         $categories = $this->getDoctrine()
             ->getRepository(Categorie::class)
             ->findAll();
