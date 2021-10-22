@@ -56,6 +56,17 @@ header {
     left: 0;
     z-index: 50;
 }
+/* 
+.log{
+    max-height : 40px; 
+    width : 120px;
+} */
+
+.left-header{
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
 
 header img {
     height: 4rem;
@@ -150,3 +161,23 @@ nav a:hover {
 .link:hover::after {
     width: 100%;
 }
+
+.question-div{
+    margin: 2rem;
+    border-bottom: 1px solid gray;
+}
+
+.reponse-div{
+    margin : 1rem; 
+}
+
+.reponse-div{
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.quest-single-div{
+    display: block;
+}
+
+

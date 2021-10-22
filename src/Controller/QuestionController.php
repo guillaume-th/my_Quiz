@@ -5,7 +5,10 @@ namespace App\Controller;
 use App\Entity\Reponse;
 use App\Entity\Categorie;
 use App\Entity\Question;
+use App\Entity\HistoriqueQuizz;
+use App\Controller\HistoriqueQuizzController;
 use App\Form\QuestionType;
+use Symfony\Component\HttpFoundation\Cookie; 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,6 +26,31 @@ class QuestionController extends AbstractController
      */
     public function index($id, $idQuestion = NULL, $count = null): Response
     {
+        $qryCategorieId = "idCategorie";
+        $tmpQuestion = $this->getDoctrine()
+            ->getRepository(Question::class)
+            ->findOneBy([
+                "idCategorie" => $id,
+            ]);
+        if ($tmpQuestion == null) {
+            $qryCategorieId = "categorie";
+            $tmpQuestion = $this->getDoctrine()
+            ->getRepository(Question::class)
+            ->findOneBy([
+                $qryCategorieId => $id,
+            ]);
+        }
+        // var_dump($tmpQuestion); 
+        $qryQuestionId = "idQuestion";
+        $reponse = $this->getDoctrine()
+            ->getRepository(Reponse::class)
+            ->findBy([
+                $qryQuestionId => $tmpQuestion->id,
+            ]);
+        if ($reponse == null) {
+            $qryQuestionId = "question";
+        }
+
         $session = new Session();
         if ($count != null) {
             $score = $this->getDoctrine()
@@ -31,28 +59,35 @@ class QuestionController extends AbstractController
                     "id" => $count,
                 ]);
             if ($score->reponseExpected == true) {
-            $session->set('countscore', $session->get('countscore')+1);
+                $session->set('countscore', $session->get('countscore') + 1);
             }
         } else {
             $session->start();
             $session->set('countscore', 0);
         }
+
         if ($idQuestion == NULL) {
             $question = $this->getDoctrine()
                 ->getRepository(Question::class)
                 ->findOneBy([
-                    "idCategorie" => $id,
+                    $qryCategorieId => $id,
                 ]);
         } else {
             $question = $this->getDoctrine()
                 ->getRepository(Question::class)
                 ->findOneBy([
-                    "idCategorie" => $id,
+                    $qryCategorieId => $id,
                     "id" => $idQuestion
                 ]);
         }
         if ($question == NULL) {
             $count = $session->get('countscore');
+            $cat = $this->getDoctrine()
+            ->getRepository(Categorie::class)
+            ->findOneBy([
+                "id" => $id,
+            ]);
+            $this->setScore($count, $cat);
             return $this->render('question/score.html.twig', [
                 'count' => $count,
                 'categorie' => $id,
@@ -61,14 +96,49 @@ class QuestionController extends AbstractController
             $reponses = $this->getDoctrine()
                 ->getRepository(Reponse::class)
                 ->findBy([
-                    "idQuestion" => $question->id,
+                    $qryQuestionId => $question->id,
                 ]);
+            shuffle($reponses);
             return $this->render('question/index.html.twig', [
                 'questions' => $question,
                 'reponses' => $reponses,
                 '$count' => $count,
 
             ]);
+        }
+    }
+
+    /**
+     * @Route("/score", name="setScore", methods={"GET","POST"})
+     */
+    public function setScore($score, Categorie $categorie)
+    {
+        $user = $this->get('security.token_storage')->getToken();
+        if ($user) {
+            $user = $user->getUser(); 
+            $history = new HistoriqueQuizz();
+
+            $history->setScore($score);
+            $history->setUser($user);
+            $history->setCategorie($categorie);
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($history);
+            $entityManager->flush();
+        } else {
+            // $value = "score:$score;categorie:$categorie->id;"
+            $value = [
+                "categorie" => $categorie->id,
+                "score" => $score,
+                "user" => "guest"
+            ];
+
+            // $cookie = Cookie::create("history")
+            // ->withValue(json_encode($value))
+            // ->withExpires(time() + 2 * 24 * 60 * 60) 
+            // ->withDomain("quiz.com")
+            // ->withSecure(true); 
+            $cookie = new Cookie("history", json_encode($value), time() + 2 * 24 * 60 * 60);
+            // setcookie("history", json_encode($value), time() + 2 * 24 * 60 * 60);
         }
     }
 

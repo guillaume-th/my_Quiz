@@ -24,8 +24,13 @@
 							{% for reponse in reponses %}
 								<tr>
 									<td>
+									{% if questions.idCategorie %}
 										<a href="{{ path('question_index', {'idQuestion': questions.id+1, 'id' : questions.idCategorie , 'count' : reponse.id})}}">{{ reponse.reponse }}</a>
+									{% else %}
+										<a href="{{ path('question_index', {'idQuestion': questions.id+1, 'id' : questions.categorie.id , 'count' : reponse.id})}}">{{ reponse.reponse }}</a>
+									{% endif %}
 									</td>
+									
 								</tr>
 							{% else %}
 								<tr>

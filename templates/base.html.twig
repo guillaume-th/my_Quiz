@@ -22,8 +22,12 @@
 				{% else %}
 					<a href={{ path('user_show_guest')}}>Profile</a>
 				{% endif %}
-
 			</nav>
+			{% if app.user %}
+				<a class="log btn" href={{ path('app_logout') }}>Logout</a>
+			{% else %}
+				<a class="log btn" href={{ path('app_login') }}>Logout</a>
+			{% endif %}
 		</header>
 {% endblock %}
 	{% endblock %}</body>

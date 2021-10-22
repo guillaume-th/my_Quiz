@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\Categorie;
+use App\Entity\Question;
+use App\Entity\Reponse;
 use App\Form\CategorieType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -35,25 +37,46 @@ class CategorieController extends AbstractController
     {
         $this->denyAccessUnlessGranted("IS_AUTHENTICATED_FULLY");
         $user = $this->get('security.token_storage')->getToken()->getUser();
-        if($user->isVerified()){
+        if ($user->isVerified()) {
             $categorie = new Categorie();
+            $questions = [];
+            $reponses = [];
+            for ($i = 0; $i < 10; $i++) {
+                $q = new Question();
+                $r1 = new Reponse();
+                $r2 = new Reponse();
+                $r3 = new Reponse();
+                $q->addReponse($r1);
+                $q->addReponse($r2);
+                $q->addReponse($r3);
+                array_push($questions, $q);
+                array_push($reponses, $r1, $r2, $r3);
+                $categorie->addCategorie($q);
+            }
+
             $form = $this->createForm(CategorieType::class, $categorie);
             $form->handleRequest($request);
-    
+
             if ($form->isSubmitted() && $form->isValid()) {
                 $entityManager = $this->getDoctrine()->getManager();
                 $entityManager->persist($categorie);
+                foreach ($questions as $q) {
+                    $entityManager->persist($q);
+                }
+                foreach ($reponses as $r) {
+                    $entityManager->persist($r);
+                }
                 $entityManager->flush();
-                $id = $this->getDoctrine()->getRepository(Categorie::class)->findBy(array(),array('id'=>'DESC'),1,0);
-    
-                return $this->redirectToRoute('question/new.html.twig', ["id" => $id], Response::HTTP_SEE_OTHER);
+                // $id = $this->getDoctrine()->getRepository(Categorie::class)->findBy(array(),array('id'=>'DESC'),1,0);
+
+                return $this->redirectToRoute('categorie_index', [], Response::HTTP_SEE_OTHER);
             }
             return $this->renderForm('categorie/new.html.twig', [
                 'categorie' => $categorie,
                 'form' => $form,
             ]);
         }
-        return $this->redirectToRoute("app_verify_wait"); 
+        return $this->redirectToRoute("app_verify_wait");
     }
 
     /**
@@ -64,7 +87,6 @@ class CategorieController extends AbstractController
         return $this->render('categorie/show.html.twig', [
             'categorie' => $categorie,
         ]);
-
     }
 
     /**
@@ -92,7 +114,7 @@ class CategorieController extends AbstractController
      */
     public function delete(Request $request, Categorie $categorie): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$categorie->id, $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $categorie->id, $request->request->get('_token'))) {
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($categorie);
             $entityManager->flush();

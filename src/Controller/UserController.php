@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use Symfony\Component\HttpFoundation\Cookie;
 use App\Form\UserType;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -63,7 +64,7 @@ class UserController extends AbstractController
     public function show(User $user): Response
     {
         $stats = [];
-        $stats = $user->getHistoriqueQuizzs(); 
+        $stats = $user->getHistoriqueQuizzs();
 
         return $this->render('user/show.html.twig', [
             'user' => $user,
@@ -74,10 +75,13 @@ class UserController extends AbstractController
     /**
      * @Route("/guest", name="user_show_guest", methods={"GET"})
      */
-    public function showGuest(): Response
+    public function showGuest(Request $request)/* : Response */
     {
         $stats = [];
-        if(isset($_COOKIE["history"])){
+
+        var_dump($request->cookies->get("history"));
+        // var_dump($request->cookies); 
+        if (isset($_COOKIE["history"])) {
             $stats = $_COOKIE["history"];
         }
         return $this->render('user/show.html.twig', [
@@ -91,7 +95,7 @@ class UserController extends AbstractController
      */
     public function edit(Request $request, User $user, UserPasswordHasherInterface $userPasswordHasherInterface): Response
     {
-        
+
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
 
