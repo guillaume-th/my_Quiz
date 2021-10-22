@@ -13,6 +13,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mime\Address;
 use App\Form\UserType;
+use App\Form\CategorieType;
 
 /**
  * @Route("/admin")
@@ -70,14 +71,28 @@ class AdminController extends AbstractController
         if ($this->testAdmin()) {
             $stats = [];
             $stats = $user->getHistoriqueQuizzs(); 
+            $roles = $user->getRoles();
+            $roles = in_array('ROLE_ADMIN', $roles);
     
             return $this->render('admin/showUser.html.twig', [
                 'user' => $user,
-                "stats" => $stats
+                "stats" => $stats,
+                'admin' => $roles
             ]);
         } else {
             return $this->redirectToRoute("categorie_index");
         }
+    }
+
+    /**
+     * @Route("/users/{id}", name="user_to_admin", methods={"POST"})
+     */
+    public function newAdmin(User $user): Response
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+        $user->setRoles(array('ROLE_ADMIN'));
+        $entityManager->flush();
+        return $this->redirectToRoute('admin_users', [], Response::HTTP_SEE_OTHER);
     }
 
     /**
@@ -88,6 +103,8 @@ class AdminController extends AbstractController
         if ($this->testAdmin()) {
             $form = $this->createForm(UserType::class, $user);
             $form->handleRequest($request);
+            $roles = $user->getRoles();
+            $roles = in_array('ROLE_ADMIN', $roles);
     
             if ($form->isSubmitted() && $form->isValid()) {
     
@@ -118,6 +135,7 @@ class AdminController extends AbstractController
             return $this->renderForm('admin/editUser.html.twig', [
                 'user' => $user,
                 'form' => $form,
+                'admin' => $roles
             ]);
         } else {
             return $this->redirectToRoute("categorie_index");
@@ -140,6 +158,36 @@ class AdminController extends AbstractController
         } else {
             return $this->redirectToRoute("categorie_index");
         }
+    }
+
+    /**
+     * @Route("/quizzes/{id}", name="admin_categorie_show", methods={"GET"})
+     */
+    public function showQuizzes(Categorie $categorie): Response
+    {
+        return $this->render('categorie/show.html.twig', [
+            'categorie' => $categorie,
+        ]);
+    }
+
+    /**
+     * @Route("/quizzes/{id}/edit", name="admin_categorie_edit", methods={"GET","POST"})
+     */
+    public function editQuizz(Request $request, Categorie $categorie): Response
+    {
+        $form = $this->createForm(CategorieType::class, $categorie);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->getDoctrine()->getManager()->flush();
+
+            return $this->redirectToRoute('categorie_index', [], Response::HTTP_SEE_OTHER);
+        }
+
+        return $this->renderForm('categorie/edit.html.twig', [
+            'categorie' => $categorie,
+            'form' => $form,
+        ]);
     }
 
     private function testAdmin()

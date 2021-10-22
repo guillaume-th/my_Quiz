@@ -13,12 +13,20 @@ class UserType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder
-            ->add('email', EmailType::class)
-            // ->add('roles')
-            ->add('password', PasswordType::class)
-            // ->add('isVerified')
-        ;
+        if (substr($_SERVER["REQUEST_URI"], 0, 6) === '/admin') {
+            $builder
+                ->add('email', EmailType::class)
+                // ->add('roles')
+                ->add('password', PasswordType::class)
+                ->add('isVerified');
+        } else {
+            $builder
+                ->add('email', EmailType::class)
+                // ->add('roles')
+                ->add('password', PasswordType::class)
+                // ->add('isVerified')
+            ;
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver): void
