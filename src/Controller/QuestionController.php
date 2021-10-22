@@ -205,7 +205,7 @@ class QuestionController extends AbstractController
      */
     public function delete(Request $request, Question $question): Response
     {
-        if ($this->isCsrfTokenValid('delete' . $question->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $question->id, $request->request->get('_token'))) {
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($question);
             $entityManager->flush();

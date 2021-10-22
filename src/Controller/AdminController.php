@@ -13,6 +13,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mime\Address;
 use App\Form\UserType;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 /**
  * @Route("/admin")
@@ -155,4 +156,6 @@ class AdminController extends AbstractController
             return false;
         }
     }
+
+ 
 }

@@ -36,6 +36,25 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->_em->flush();
     }
 
+    public function findAllConnectedLastPeriod($datetime, $connected)
+    {
+        $symbol = "";
+        if($connected){
+            $symbol = ">="; 
+        }
+        else{
+            $symbol = "<="; 
+        }
+
+        $qb = $this->createQueryBuilder("u")
+        ->where("u.last_login $symbol :datetime")
+        ->setParameter("datetime", $datetime);
+
+        $qry = $qb->getQuery(); 
+
+        return $qry->execute(); 
+    }
+
     // /**
     //  * @return User[] Returns an array of User objects
     //  */
