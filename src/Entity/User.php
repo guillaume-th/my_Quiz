@@ -50,6 +50,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $historiqueQuizzs;
 
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $last_login;
+
     public function __construct()
     {
         $this->historiqueQuizzs = new ArrayCollection();
@@ -182,6 +187,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $historiqueQuizz->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getLastLogin(): ?\DateTimeInterface
+    {
+        return $this->last_login;
+    }
+
+    public function setLastLogin(?\DateTimeInterface $last_login): self
+    {
+        $this->last_login = $last_login;
 
         return $this;
     }
