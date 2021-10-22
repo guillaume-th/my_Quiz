@@ -40,7 +40,6 @@ class QuestionController extends AbstractController
                 $qryCategorieId => $id,
             ]);
         }
-        // var_dump($tmpQuestion); 
         $qryQuestionId = "idQuestion";
         $reponse = $this->getDoctrine()
             ->getRepository(Reponse::class)
@@ -130,15 +129,30 @@ class QuestionController extends AbstractController
                 "categorie" => $categorie->id,
                 "score" => $score,
                 "user" => "guest"
-            ];
-
-            // $cookie = Cookie::create("history")
-            // ->withValue(json_encode($value))
-            // ->withExpires(time() + 2 * 24 * 60 * 60) 
-            // ->withDomain("quiz.com")
-            // ->withSecure(true); 
-            $cookie = new Cookie("history", json_encode($value), time() + 2 * 24 * 60 * 60);
-            // setcookie("history", json_encode($value), time() + 2 * 24 * 60 * 60);
+            ]; 
+            $request = Request::createFromGlobals();
+            $response = new Response(
+                "Content", 
+                Response::HTTP_OK, 
+                ["content-type" => "text/html"]
+            );
+            $oldCookie = $request->cookies->get("history");
+            var_dump($oldCookie); 
+            if($oldCookie){
+                $oldValue = json_decode($oldCookie); 
+                foreach($oldValue as $i => $c){
+                    if($categorie->id == $c->categorie){
+                        array_splice($oldValue, $i); 
+                    }
+                }
+                array_push($oldValue, $value);
+                $cookie = new Cookie("history", json_encode($oldValue), time() + 2 * 24 * 60 * 60);
+            } 
+            else{
+                $cookie = new Cookie("history", json_encode([$value]), time() + 2 * 24 * 60 * 60);
+            }
+            $response->headers->setCookie($cookie); 
+            $response->send(); 
         }
     }
 
@@ -191,7 +205,7 @@ class QuestionController extends AbstractController
      */
     public function delete(Request $request, Question $question): Response
     {
-        if ($this->isCsrfTokenValid('delete' . $question->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $question->id, $request->request->get('_token'))) {
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($question);
             $entityManager->flush();

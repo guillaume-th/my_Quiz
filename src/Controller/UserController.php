@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use App\Entity\Categorie;
 use Symfony\Component\HttpFoundation\Cookie;
 use App\Form\UserType;
 use App\Repository\UserRepository;
@@ -75,14 +76,24 @@ class UserController extends AbstractController
     /**
      * @Route("/guest", name="user_show_guest", methods={"GET"})
      */
-    public function showGuest(Request $request)/* : Response */
+    public function showGuest(Request $request): Response
     {
         $stats = [];
 
-        var_dump($request->cookies->get("history"));
-        // var_dump($request->cookies); 
-        if (isset($_COOKIE["history"])) {
-            $stats = $_COOKIE["history"];
+        $cookies = $request->cookies->get("history");
+        var_dump($cookies); 
+        if ($cookies) {
+            $cookies = json_decode($cookies);
+            foreach ($cookies as $cookie) {
+                $tmp = [];
+                $tmp["categorie"] =  $this->getDoctrine()
+                    ->getRepository(Categorie::class)
+                    ->findOneBy([
+                        "id" => $cookie->categorie,
+                    ])->name;
+                $tmp["score"] = $cookie->score; 
+                array_push($stats, $tmp); 
+            }
         }
         return $this->render('user/show.html.twig', [
             'user' => NULL,

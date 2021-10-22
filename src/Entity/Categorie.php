@@ -40,11 +40,17 @@ class Categorie
      */
     private $categorie= NULL;
 
+    /**
+     * @ORM\OneToMany(targetEntity=QuizzCount::class, mappedBy="categorie")
+     */
+    private $quizzCounts;
+
     public function __construct()
     {
         $this->historiqueQuizzs = new ArrayCollection();
         $this->question = new ArrayCollection();
         $this->categorie = new ArrayCollection();
+        $this->quizzCounts = new ArrayCollection();
     }
 
     /**
@@ -110,6 +116,36 @@ class Categorie
     public function __toString(): string
     {
         return 'categorie';
+    }
+
+    /**
+     * @return Collection|QuizzCount[]
+     */
+    public function getQuizzCounts(): Collection
+    {
+        return $this->quizzCounts;
+    }
+
+    public function addQuizzCount(QuizzCount $quizzCount): self
+    {
+        if (!$this->quizzCounts->contains($quizzCount)) {
+            $this->quizzCounts[] = $quizzCount;
+            $quizzCount->setCategorie($this);
+        }
+
+        return $this;
+    }
+
+    public function removeQuizzCount(QuizzCount $quizzCount): self
+    {
+        if ($this->quizzCounts->removeElement($quizzCount)) {
+            // set the owning side to null (unless already changed)
+            if ($quizzCount->getCategorie() === $this) {
+                $quizzCount->setCategorie(null);
+            }
+        }
+
+        return $this;
     }
 
 }
