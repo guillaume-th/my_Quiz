@@ -15,5 +15,9 @@
 		{# <a href="{{ path('admin_users') }}">back to list</a> #}
 		<p>OR</p>
 		{{ include('user/_delete_form.html.twig') }}
+		
+		{% if not admin %}
+			{{ include('admin/_form.html.twig') }}
+		{% endif %}
 	</div>
 {% endblock %}
