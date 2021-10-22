@@ -21,6 +21,11 @@
                 <a href={{ path('admin_statistiques') }}>Statistiques</a>
                 <a href={{ path('admin_email') }}>Email</a>
 			</nav>
+			{% if app.user %}
+				<a class="log btn" href={{ path('app_logout') }}>Logout</a>
+			{% else %}
+				<a class="log btn" href={{ path('app_login') }}>Login</a>
+			{% endif %}
 		</header>
 {% endblock %}
 	{% endblock %}</body>

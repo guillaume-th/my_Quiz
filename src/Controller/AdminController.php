@@ -13,11 +13,8 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mime\Address;
 use App\Form\UserType;
-<<<<<<< HEAD
 use App\Form\CategorieType;
-=======
 use Symfony\Component\HttpFoundation\RedirectResponse;
->>>>>>> 1aea7219da44cf7c199b15700e06fcc96d44e1b2
 
 /**
  * @Route("/admin")
@@ -74,10 +71,10 @@ class AdminController extends AbstractController
     {
         if ($this->testAdmin()) {
             $stats = [];
-            $stats = $user->getHistoriqueQuizzs(); 
+            $stats = $user->getHistoriqueQuizzs();
             $roles = $user->getRoles();
             $roles = in_array('ROLE_ADMIN', $roles);
-    
+
             return $this->render('admin/showUser.html.twig', [
                 'user' => $user,
                 "stats" => $stats,
@@ -109,20 +106,20 @@ class AdminController extends AbstractController
             $form->handleRequest($request);
             $roles = $user->getRoles();
             $roles = in_array('ROLE_ADMIN', $roles);
-    
+
             if ($form->isSubmitted() && $form->isValid()) {
-    
+
                 $user->setPassword(
                     $userPasswordHasherInterface->hashPassword(
                         $user,
                         $form->get('password')->getData()
                     )
                 );
-    
+
                 $entityManager = $this->getDoctrine()->getManager();
                 $entityManager->persist($user);
                 $entityManager->flush();
-    
+
                 $this->emailVerifier->sendEmailConfirmation(
                     'app_verify_email',
                     $user,
@@ -132,10 +129,10 @@ class AdminController extends AbstractController
                         ->subject('Please Confirm your Email')
                         ->htmlTemplate('registration/confirmation_email.html.twig')
                 );
-    
+
                 return $this->redirectToRoute('app_verify_wait', [], Response::HTTP_SEE_OTHER);
             }
-    
+
             return $this->renderForm('admin/editUser.html.twig', [
                 'user' => $user,
                 'form' => $form,
@@ -169,9 +166,13 @@ class AdminController extends AbstractController
      */
     public function showQuizzes(Categorie $categorie): Response
     {
-        return $this->render('categorie/show.html.twig', [
-            'categorie' => $categorie,
-        ]);
+        if ($this->testAdmin()) {
+            return $this->render('categorie/show.html.twig', [
+                'categorie' => $categorie,
+            ]);
+        } else {
+            return $this->redirectToRoute("categorie_index");
+        }
     }
 
     /**
@@ -179,19 +180,23 @@ class AdminController extends AbstractController
      */
     public function editQuizz(Request $request, Categorie $categorie): Response
     {
-        $form = $this->createForm(CategorieType::class, $categorie);
-        $form->handleRequest($request);
+        if ($this->testAdmin()) {
+            $form = $this->createForm(CategorieType::class, $categorie);
+            $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
+            if ($form->isSubmitted() && $form->isValid()) {
+                $this->getDoctrine()->getManager()->flush();
 
-            return $this->redirectToRoute('categorie_index', [], Response::HTTP_SEE_OTHER);
+                return $this->redirectToRoute('categorie_index', [], Response::HTTP_SEE_OTHER);
+            }
+
+            return $this->renderForm('categorie/edit.html.twig', [
+                'categorie' => $categorie,
+                'form' => $form,
+            ]);
+        } else {
+            return $this->redirectToRoute("categorie_index");
         }
-
-        return $this->renderForm('categorie/edit.html.twig', [
-            'categorie' => $categorie,
-            'form' => $form,
-        ]);
     }
 
     private function testAdmin()
@@ -207,6 +212,4 @@ class AdminController extends AbstractController
             return false;
         }
     }
-
- 
 }
