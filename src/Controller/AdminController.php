@@ -13,11 +13,8 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
 use Symfony\Component\Mime\Address;
 use App\Form\UserType;
-<<<<<<< HEAD
 use App\Form\CategorieType;
-=======
 use Symfony\Component\HttpFoundation\RedirectResponse;
->>>>>>> 1aea7219da44cf7c199b15700e06fcc96d44e1b2
 
 /**
  * @Route("/admin")

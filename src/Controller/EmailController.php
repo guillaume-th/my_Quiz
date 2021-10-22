@@ -55,11 +55,15 @@ class EmailController extends AbstractController
             $email = (new Email())
                 ->from("quizbot@mail.com")
                 ->to(...$addresses)
-                ->text($form->get("email"));
+                ->text($form->get("email")->getData());
 
             // $mailer = new MailerInterface(); 
-            $mailer->send($email);
-            return $this->redirectToRoute('admin_index', [], Response::HTTP_SEE_OTHER);
+            if (count($addresses) > 0) {
+                $mailer->send($email);
+                return $this->redirectToRoute('admin_index', [], Response::HTTP_SEE_OTHER);
+            } else {
+                return $this->render('admin/index.html.twig', ["errors" => "No adresses found"]);
+            }
         }
         return $this->renderForm('email/new.html.twig', [
             'form' => $form,
