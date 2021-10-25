@@ -5,11 +5,15 @@
 
 {% block body %}
 	{% block header %}
-	
+		{{parent()}}
 	{% endblock %}
 
 	<div class="wrapper">
 		<h1>Statistiques</h1>
- <img src="https://quickchart.io/chart?c={type:'bar',data:{labels:['Aujourd hui','Cette Semaine', 'Ce Mois', 'Cette Annee'], datasets:[{label:'Nombre De Quiz fait',data:[12, 6, 5, 2, 12]}]}}">
+		{% for counts in label %}
+							<p>{{ counts }}</p>
+					{% endfor %}
+ <img src="https://quickchart.io/chart?c={type:'bar',data:{labels:['Aujourd hui','Cette Semaine', 'Ce Mois', 'Cette Annee'], datasets:[{label:'Nombre De Quiz fait',data:[ {{ label.0 }}, {{ label.1 }}, {{ label.2 }}, {{ label.3 }}]},{label:'visiteur',data:[ 4, 5, 6, 15]}]},options:{plugins:{datalabels:{formatter: (value) => {return value;}}}}}">
+
 	</div>
 {% endblock %}

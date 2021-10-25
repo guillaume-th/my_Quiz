@@ -6,8 +6,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\UserRepository;
+use App\Repository\QuizzCountRepository;
 use App\Entity\Categorie;
 use App\Entity\User;
+use App\Entity\QuizzCount;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
@@ -40,18 +42,51 @@ class AdminController extends AbstractController
      */
     public function stats(): Response
     {
-        $tmpQuestion = $this->getDoctrine()
-        ->getRepository(Question::class)
-        ->findOneBy([
-            "idCategorie" => ,
-        ]);
+        // $date = new \DateTime();
+        // $d1 = $date->modify("-6 hour");
+        // $date = new \DateTime();
+        // $d2= $date->modify("-12 hour");
+        // $date = new \DateTime();
+        // $d3 = $date->modify("-18 hour");
+        // $date = new \DateTime();
+        // $d4 = $date->modify("-24 hour");
+        $date = new \DateTime();
+        $d1 = $date->modify("-24 hour");
+        $date = '';
+        $date = new \DateTime();
+        $d2= $date->modify("-168 hour");
+        $date ='';
+        $date = new \DateTime();
+        $d3 = $date->modify("-1 month");
+        $date ='';
+        $date = new \DateTime();
+        $d4 = $date->modify("-1 Year");
+
+        // $datesArray = ["00h-06h" => $d1,"06h-12h" => $d2,"12h-18h" => $d3,"18h-24h" => $d4];
+        $datesArray = [$d1,$d2,$d3,$d4];
+        $counts = [];
+        foreach ($datesArray as $key => $d) {
+            $tmpCount = $this->getDoctrine()
+                ->getRepository(QuizzCount::class)
+                ->findQuizzesLastPeriod($d);
+            //push dans count
+            $counts[$key] = $tmpCount;
+        }
+        var_dump($counts);
         if ($this->testAdmin()) {
             return $this->render('admin/stats.html.twig', [
-                'quizz' => 'AdminController',
+                'label' => $counts,
             ]);
         } else {
             return $this->redirectToRoute("categorie_index");
         }
+        // $date = new \DateTime();
+        // $reponses = $this->getDoctrine()
+        // ->getRepository(QuizzCount::class)
+        // ->findBy([
+        //     'time' => $date,
+        // ]);
+        //  var_dump($reponses);
     }
 
     /**
@@ -76,10 +111,10 @@ class AdminController extends AbstractController
     {
         if ($this->testAdmin()) {
             $stats = [];
-            $stats = $user->getHistoriqueQuizzs(); 
+            $stats = $user->getHistoriqueQuizzs();
             $roles = $user->getRoles();
             $roles = in_array('ROLE_ADMIN', $roles);
-    
+
             return $this->render('admin/showUser.html.twig', [
                 'user' => $user,
                 "stats" => $stats,
@@ -111,7 +146,7 @@ class AdminController extends AbstractController
             $form->handleRequest($request);
             $roles = $user->getRoles();
             $roles = in_array('ROLE_ADMIN', $roles);
-    
+
             if ($form->isSubmitted() && $form->isValid()) {
 
                 $user->setPassword(
@@ -209,6 +244,4 @@ class AdminController extends AbstractController
             return false;
         }
     }
-
- 
 }
