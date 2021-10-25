@@ -10,5 +10,8 @@
 
 	<div class="wrapper">
 		<h1>Admin</h1>
+	{% if errors is defined %}
+		<p>{{errors}}</p>
+	{% endif %}
 	</div>
 {% endblock %}
