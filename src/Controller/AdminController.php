@@ -10,6 +10,7 @@ use App\Repository\QuizzCountRepository;
 use App\Entity\Categorie;
 use App\Entity\User;
 use App\Entity\QuizzCount;
+use App\Entity\Visiteur;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
@@ -72,10 +73,17 @@ class AdminController extends AbstractController
             //push dans count
             $counts[$key] = $tmpCount;
         }
-        var_dump($counts);
+        $Visiteur = $this->getDoctrine()
+        ->getRepository(Visiteur::class)
+        ->findAll();
+        $countVisiteur=0;
+        foreach ($Visiteur as $key => $value) {
+            $countVisiteur++;
+        }
         if ($this->testAdmin()) {
             return $this->render('admin/stats.html.twig', [
                 'label' => $counts,
+                'visiteur' =>$countVisiteur,
             ]);
         } else {
             return $this->redirectToRoute("categorie_index");

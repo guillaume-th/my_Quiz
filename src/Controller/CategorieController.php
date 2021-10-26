@@ -12,6 +12,8 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\Session\Session;
+use App\Entity\Visiteur;
 
 /**
  * @Route("/categorie")
@@ -23,6 +25,19 @@ class CategorieController extends AbstractController
      */
     public function index(): Response
     {
+        $session = new Session();
+
+        if($session->get('Visiteur')==null){
+        $session = new Session();
+        $session->set('Visiteur', 1 );
+        $entityManager = $this->getDoctrine()->getManager();
+
+        $product = new Visiteur();
+        $product->settime(new \DateTime());
+        $entityManager->persist($product);
+        $entityManager->flush();
+        }
+
         $user = $this->get('security.token_storage')->getToken();
         if($user){
             $user=$user->getUser(); 
