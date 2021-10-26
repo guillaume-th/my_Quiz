@@ -80,10 +80,17 @@ class AdminController extends AbstractController
         foreach ($Visiteur as $key => $value) {
             $countVisiteur++;
         }
+        foreach ($datesArray as $key => $value) {
+            $Visiteur = $this->getDoctrine()
+            ->getRepository(Visiteur::class)
+            ->findVisiteurLastPeriod($d);
+            $Visiteurcount[$key]=$Visiteur;
+        }
         if ($this->testAdmin()) {
             return $this->render('admin/stats.html.twig', [
                 'label' => $counts,
-                'visiteur' =>$countVisiteur,
+                // 'visiteur' =>$countVisiteur,
+                'visiteur' =>$Visiteurcount,
             ]);
         } else {
             return $this->redirectToRoute("categorie_index");

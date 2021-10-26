@@ -18,7 +18,18 @@ class VisiteurRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Visiteur::class);
     }
+    
+    public function findVisiteurLastPeriod($datetime)
+    {
+        $qb = $this->createQueryBuilder("q")
+        ->select("count(q.id)")
+        ->where("q.time >= :datetime")
+        ->setParameter("datetime", $datetime);
 
+       return $qb->getQuery()->getSingleScalarResult();
+
+        // return $qry->execute();
+    }
     // /**
     //  * @return Visiteur[] Returns an array of Visiteur objects
     //  */
