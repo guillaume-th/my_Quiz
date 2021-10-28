@@ -16,14 +16,13 @@ class CategorieType extends AbstractType
     {
         $builder
             ->add(
-                'name'
+                'name',
             );
 
         for ($i = 0; $i < 10; $i++) {
             $builder->add("categorie", CollectionType::class, [
                 "entry_type" => QuestionType::class,
                 "entry_options" => ["label" => false, "attr" => ["class" => "question-div"]],
-
             ]);
         }
     }

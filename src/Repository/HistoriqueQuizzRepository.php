@@ -19,6 +19,40 @@ class HistoriqueQuizzRepository extends ServiceEntityRepository
         parent::__construct($registry, HistoriqueQuizz::class);
     }
 
+
+    public function findUsersByQuizzTaken($quizzes, $taken)
+    {
+        // $symbol = $taken ? "=" : "!="; 
+        $qb = $this->createQueryBuilder("h")
+            ->select("DISTINCT h")
+            ->where("h.categorie = :quizzes")
+            ->setParameter("quizzes", $quizzes);
+        $qry = $qb->getQuery();
+
+        // if ($taken) {
+        return $qry->execute();
+        // } else {
+        //     $quizzes = [];
+        //     $data = $qry->execute();
+        //     foreach($data as $d){
+        //         array_push($quizzes, $d->getCategorie()->id);
+        //     }
+        //     $qb = $this->createQueryBuilder("h")
+        //         ->select("DISTINCT h")
+        //         ->where("h.categorie != :quizzes")
+        //         ->setParameter("quizzes", $quizzes);
+        //     $qry = $qb->getQuery();
+        //     return $qry->execute();
+        // }
+
+
+
+        // $qry = $qb->getQuery();
+        // dd($qry); 
+        // $ids = $qry->execute()->id;
+    }
+
+
     // /**
     //  * @return HistoriqueQuizz[] Returns an array of HistoriqueQuizz objects
     //  */

@@ -51,7 +51,17 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         ->setParameter("datetime", $datetime);
 
         $qry = $qb->getQuery(); 
+        // dd($qry); 
 
+        return $qry->execute(); 
+    }
+
+    public function findUsersByNegId($id){
+        $qb = $this->createQueryBuilder("u")
+        ->where("u.id NOT IN (:id)")
+        ->setParameter("id", $id);
+        $qry = $qb->getQuery(); 
+        // dd($qry); 
         return $qry->execute(); 
     }
 
