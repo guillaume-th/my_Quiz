@@ -22,13 +22,15 @@ class QuizzCountRepository extends ServiceEntityRepository
     public function findQuizzesLastPeriod($datetime)
     {
         $qb = $this->createQueryBuilder("q")
+        ->select("count(q.id)")
         ->where("q.time >= :datetime")
         ->setParameter("datetime", $datetime);
 
-        $qry = $qb->getQuery(); 
+       return $qb->getQuery()->getSingleScalarResult(); 
 
-        return $qry->execute(); 
+        // return $qry->execute(); 
     }
+
 
     // /**
     //  * @return QuizzCount[] Returns an array of QuizzCount objects

@@ -6,8 +6,12 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\UserRepository;
+use App\Repository\QuizzCountRepository;
 use App\Entity\Categorie;
 use App\Entity\User;
+use App\Entity\HistoriqueQuizz;
+use App\Entity\QuizzCount;
+use App\Entity\Visiteur;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
@@ -42,13 +46,86 @@ class AdminController extends AbstractController
      */
     public function stats(): Response
     {
+        // $date = new \DateTime();
+        // $d1 = $date->modify("-6 hour");
+        // $date = new \DateTime();
+        // $d2= $date->modify("-12 hour");
+        // $date = new \DateTime();
+        // $d3 = $date->modify("-18 hour");
+        // $date = new \DateTime();
+        // $d4 = $date->modify("-24 hour");
+        $date = new \DateTime();
+        $d1 = $date->modify("-24 hour");
+        $date = '';
+        $date = new \DateTime();
+        $d2= $date->modify("-168 hour");
+        $date ='';
+        $date = new \DateTime();
+        $d3 = $date->modify("-1 month");
+        $date ='';
+        $date = new \DateTime();
+        $d4 = $date->modify("-1 Year");
+
+        // $datesArray = ["00h-06h" => $d1,"06h-12h" => $d2,"12h-18h" => $d3,"18h-24h" => $d4];
+        $datesArray = [$d1,$d2,$d3,$d4];
+        $counts = [];
+        foreach ($datesArray as $key => $d) {
+            $tmpCount = $this->getDoctrine()
+                ->getRepository(QuizzCount::class)
+                ->findQuizzesLastPeriod($d);
+            //push dans count
+            $counts[$key] = $tmpCount;
+        }
+        // $Visiteur = $this->getDoctrine()
+        // ->getRepository(Visiteur::class)
+        // ->findAll();
+        // $countVisiteur=0;
+        // foreach ($Visiteur as $key => $value) {
+        //     $countVisiteur++;
+        // }
+        foreach ($datesArray as $key => $d) {
+            $Visiteur = $this->getDoctrine()
+            ->getRepository(Visiteur::class)
+            ->findVisiteurLastPeriod($d);
+            $Visiteurcount[$key]=$Visiteur;
+        }
+        $arrayscore = [];
+        $id_categorie=$this->getDoctrine()
+        ->getRepository(Categorie::class)
+        ->findAll();
+        // var_dump(count($id_categorie));
+        for ($i=0; $i < count($id_categorie) ; $i++) {
+        // var_dump('in');
+          $getscore=$this->getDoctrine()
+          ->getRepository(HistoriqueQuizz::class)
+          ->findBy([
+              'categorie'=>$id_categorie[$i]
+          ]);
+          $num = count($getscore);
+          $scorefinal = 0;
+          for ($i=0; $i < $num ; $i++) { 
+            $scorefinal = $scorefinal + $getscore[$i]->getScore();
+          }
+          $scorefinal = $scorefinal / $num;
+          array_push($arrayscore,$scorefinal);
+        }
+        // var_dump($arrayscore);
         if ($this->testAdmin()) {
             return $this->render('admin/stats.html.twig', [
-                'controller_name' => 'AdminController',
+                'label' => $counts,
+                // 'visiteur' =>$countVisiteur,
+                'visiteur' =>$Visiteurcount,
             ]);
         } else {
             return $this->redirectToRoute("categorie_index");
         }
+        // $date = new \DateTime();
+        // $reponses = $this->getDoctrine()
+        // ->getRepository(QuizzCount::class)
+        // ->findBy([
+        //     'time' => $date,
+        // ]);
+        //  var_dump($reponses);
     }
 
     /**

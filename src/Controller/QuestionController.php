@@ -7,8 +7,9 @@ use App\Entity\Categorie;
 use App\Entity\Question;
 use App\Entity\HistoriqueQuizz;
 use App\Controller\HistoriqueQuizzController;
+use App\Entity\QuizzCount;
 use App\Form\QuestionType;
-use Symfony\Component\HttpFoundation\Cookie; 
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -35,10 +36,10 @@ class QuestionController extends AbstractController
         if ($tmpQuestion == null) {
             $qryCategorieId = "categorie";
             $tmpQuestion = $this->getDoctrine()
-            ->getRepository(Question::class)
-            ->findOneBy([
-                $qryCategorieId => $id,
-            ]);
+                ->getRepository(Question::class)
+                ->findOneBy([
+                    $qryCategorieId => $id,
+                ]);
         }
         $qryQuestionId = "idQuestion";
         $reponse = $this->getDoctrine()
@@ -82,11 +83,18 @@ class QuestionController extends AbstractController
         if ($question == NULL) {
             $count = $session->get('countscore');
             $cat = $this->getDoctrine()
-            ->getRepository(Categorie::class)
-            ->findOneBy([
-                "id" => $id,
-            ]);
+                ->getRepository(Categorie::class)
+                ->findOneBy([
+                    "id" => $id,
+                ]);
             $this->setScore($count, $cat);
+            $date = new \DateTime();
+            $quizz = new QuizzCount();
+            $quizz->setTime($date);
+            $quizz->setCategorie($cat);
+            $quizzfait = $this->getDoctrine()->getManager();
+            $quizzfait->persist($quizz);
+            $quizzfait->flush();
             return $this->render('question/score.html.twig', [
                 'count' => $count,
                 'categorie' => $id,
@@ -114,7 +122,7 @@ class QuestionController extends AbstractController
     {
         $user = $this->get('security.token_storage')->getToken();
         if ($user) {
-            $user = $user->getUser(); 
+            $user = $user->getUser();
             $history = new HistoriqueQuizz();
 
             $history->setScore($score);
@@ -129,30 +137,29 @@ class QuestionController extends AbstractController
                 "categorie" => $categorie->id,
                 "score" => $score,
                 "user" => "guest"
-            ]; 
+            ];
             $request = Request::createFromGlobals();
             $response = new Response(
-                "Content", 
-                Response::HTTP_OK, 
+                "Content",
+                Response::HTTP_OK,
                 ["content-type" => "text/html"]
             );
             $oldCookie = $request->cookies->get("history");
-            var_dump($oldCookie); 
-            if($oldCookie){
-                $oldValue = json_decode($oldCookie); 
-                foreach($oldValue as $i => $c){
-                    if($categorie->id == $c->categorie){
-                        array_splice($oldValue, $i); 
+            var_dump($oldCookie);
+            if ($oldCookie) {
+                $oldValue = json_decode($oldCookie);
+                foreach ($oldValue as $i => $c) {
+                    if ($categorie->id == $c->categorie) {
+                        array_splice($oldValue, $i);
                     }
                 }
                 array_push($oldValue, $value);
                 $cookie = new Cookie("history", json_encode($oldValue), time() + 2 * 24 * 60 * 60);
-            } 
-            else{
+            } else {
                 $cookie = new Cookie("history", json_encode([$value]), time() + 2 * 24 * 60 * 60);
             }
-            $response->headers->setCookie($cookie); 
-            $response->send(); 
+            $response->headers->setCookie($cookie);
+            $response->send();
         }
     }
 
