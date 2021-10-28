@@ -90,12 +90,12 @@ class AdminController extends AbstractController
             $Visiteurcount[$key]=$Visiteur;
         }
         $arrayscore = [];
+        $categoriestat = [];
+        $arrayscoregraph = [];
         $id_categorie=$this->getDoctrine()
         ->getRepository(Categorie::class)
         ->findAll();
-        // var_dump(count($id_categorie));
         for ($i=0; $i < count($id_categorie) ; $i++) {
-        // var_dump('in');
           $getscore=$this->getDoctrine()
           ->getRepository(HistoriqueQuizz::class)
           ->findBy([
@@ -103,18 +103,25 @@ class AdminController extends AbstractController
           ]);
           $num = count($getscore);
           $scorefinal = 0;
-          for ($i=0; $i < $num ; $i++) { 
-            $scorefinal = $scorefinal + $getscore[$i]->getScore();
+          for ($J=0; $J < $num ; $J++) {
+            $scorefinal = $scorefinal + $getscore[$J]->getScore();
           }
+          if($num!=0){
           $scorefinal = $scorefinal / $num;
-          array_push($arrayscore,$scorefinal);
+          array_push($categoriestat,$id_categorie[$i]->name);
+          array_push($arrayscore,$id_categorie[$i]->name.' : '.$scorefinal);
+          array_push($arrayscoregraph,$scorefinal);
+          }
         }
         // var_dump($arrayscore);
+        // var_dump($categoriestat);
         if ($this->testAdmin()) {
             return $this->render('admin/stats.html.twig', [
                 'label' => $counts,
-                // 'visiteur' =>$countVisiteur,
                 'visiteur' =>$Visiteurcount,
+                'categorie' =>json_encode($categoriestat),
+                'quizzgraphe' => json_encode($arrayscoregraph),
+                'quizz' =>$arrayscore,
             ]);
         } else {
             return $this->redirectToRoute("categorie_index");
