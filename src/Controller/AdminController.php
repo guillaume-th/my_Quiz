@@ -15,6 +15,8 @@ use Symfony\Component\Mime\Address;
 use App\Form\UserType;
 use App\Form\CategorieType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use App\Entity\Question;
+use App\Entity\Reponse;
 
 /**
  * @Route("/admin")
@@ -181,19 +183,48 @@ class AdminController extends AbstractController
     public function editQuizz(Request $request, Categorie $categorie): Response
     {
         if ($this->testAdmin()) {
+            $this->denyAccessUnlessGranted("IS_AUTHENTICATED_FULLY");
+        $user = $this->get('security.token_storage')->getToken()->getUser();
+        if ($user->isVerified()) {
+            $categorie = new Categorie();
+            $questions = [];
+            $reponses = [];
+            for ($i = 0; $i < 10; $i++) {
+                $q = new Question();
+                $r1 = new Reponse();
+                $r2 = new Reponse();
+                $r3 = new Reponse();
+                $q->addReponse($r1);
+                $q->addReponse($r2);
+                $q->addReponse($r3);
+                array_push($questions, $q);
+                array_push($reponses, $r1, $r2, $r3);
+                $categorie->addCategorie($q);
+            }
+
             $form = $this->createForm(CategorieType::class, $categorie);
             $form->handleRequest($request);
 
             if ($form->isSubmitted() && $form->isValid()) {
-                $this->getDoctrine()->getManager()->flush();
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->persist($categorie);
+                foreach ($questions as $q) {
+                    $entityManager->persist($q);
+                }
+                foreach ($reponses as $r) {
+                    $entityManager->persist($r);
+                }
+                $entityManager->flush();
+                // $id = $this->getDoctrine()->getRepository(Categorie::class)->findBy(array(),array('id'=>'DESC'),1,0);
 
-                return $this->redirectToRoute('categorie_index', [], Response::HTTP_SEE_OTHER);
+                return $this->redirectToRoute('admin_quizzes', [], Response::HTTP_SEE_OTHER);
             }
-
-            return $this->renderForm('categorie/edit.html.twig', [
+            return $this->renderForm('admin/editQuizz.html.twig', [
                 'categorie' => $categorie,
                 'form' => $form,
             ]);
+        }
+        return $this->redirectToRoute("app_verify_wait");
         } else {
             return $this->redirectToRoute("categorie_index");
         }
