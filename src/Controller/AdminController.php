@@ -9,6 +9,7 @@ use App\Repository\UserRepository;
 use App\Repository\QuizzCountRepository;
 use App\Entity\Categorie;
 use App\Entity\User;
+use App\Entity\HistoriqueQuizz;
 use App\Entity\QuizzCount;
 use App\Entity\Visiteur;
 use Symfony\Component\HttpFoundation\Request;
@@ -73,19 +74,40 @@ class AdminController extends AbstractController
             //push dans count
             $counts[$key] = $tmpCount;
         }
-        $Visiteur = $this->getDoctrine()
-        ->getRepository(Visiteur::class)
-        ->findAll();
-        $countVisiteur=0;
-        foreach ($Visiteur as $key => $value) {
-            $countVisiteur++;
-        }
-        foreach ($datesArray as $key => $value) {
+        // $Visiteur = $this->getDoctrine()
+        // ->getRepository(Visiteur::class)
+        // ->findAll();
+        // $countVisiteur=0;
+        // foreach ($Visiteur as $key => $value) {
+        //     $countVisiteur++;
+        // }
+        foreach ($datesArray as $key => $d) {
             $Visiteur = $this->getDoctrine()
             ->getRepository(Visiteur::class)
             ->findVisiteurLastPeriod($d);
             $Visiteurcount[$key]=$Visiteur;
         }
+        $arrayscore = [];
+        $id_categorie=$this->getDoctrine()
+        ->getRepository(Categorie::class)
+        ->findAll();
+        // var_dump(count($id_categorie));
+        for ($i=0; $i < count($id_categorie) ; $i++) {
+        // var_dump('in');
+          $getscore=$this->getDoctrine()
+          ->getRepository(HistoriqueQuizz::class)
+          ->findBy([
+              'categorie'=>$id_categorie[$i]
+          ]);
+          $num = count($getscore);
+          $scorefinal = 0;
+          for ($i=0; $i < $num ; $i++) { 
+            $scorefinal = $scorefinal + $getscore[$i]->getScore();
+          }
+          $scorefinal = $scorefinal / $num;
+          array_push($arrayscore,$scorefinal);
+        }
+        // var_dump($arrayscore);
         if ($this->testAdmin()) {
             return $this->render('admin/stats.html.twig', [
                 'label' => $counts,

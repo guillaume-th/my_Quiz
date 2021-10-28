@@ -10,7 +10,7 @@
 
 	<div class="wrapper">
 		<h1>Statistiques</h1>
- <img src="https://quickchart.io/chart?c={type:'bar',data:{labels:['Aujourd hui','Cette Semaine', 'Ce Mois', 'Cette Annee'], datasets:[{label:'Nombre De Quiz fait',data:[ {{ label.0 }}, {{ label.1 }}, {{ label.2 }}, {{ label.3 }}]},{label:'nombre de visiteur',data:[ {{ visiteur.0 }}, {{ visiteur.1 }}, {{ visiteur.2 }}, {{ visiteur.3 }}]}]},options:{plugins:{datalabels:{formatter: (value) => {return value;}}}}}">
+ <img src="https://quickchart.io/chart?c={type:'bar',data:{labels:['dernier 24h','Une Semaine', 'Un Mois', 'Cette Annee'], datasets:[{label:'Nombre De Quiz fait',data:[ {{ label.0 }}, {{ label.1 }}, {{ label.2 }}, {{ label.3 }}]},{label:'nombre de visiteur',data:[ {{ visiteur.0 }}, {{ visiteur.1 }}, {{ visiteur.2 }}, {{ visiteur.3 }}]}]},options:{plugins:{datalabels:{formatter: (value) => {return value;}}}}}">
 
 	</div>
 {% endblock %}
