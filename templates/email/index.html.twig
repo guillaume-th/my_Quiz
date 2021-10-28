@@ -9,10 +9,13 @@
 	{% endblock %}
 
 	<div class="wrapper">
-        <h3>Send email to your users</h3>
-        <a href={{path("admin_email_last_month", {"connected" : "true"})}}>To users connected in the last month</a>
-        <br>
-        <a href={{path("admin_email_last_month", {"connected" : "false"})}}>To users not connected the last month</a>
-        
-    </div>
+		<h3>Send email to your users</h3>
+		<a href={{path("admin_email_last_month", {"connected" : "true"} )}}>To users connected in the last month</a>
+		<br>
+		<a href={{path("admin_email_last_month", {"connected" : "false"} )}}>To users not connected the last month</a>
+		<br>
+		<a href={{path("admin_email_choose_quiz", {"taken" : "true"} )}}>To users by quizz taken</a>
+		<br>
+		<a href={{path("admin_email_choose_quiz", {"taken" : "false"} )}}>To users by quizz not taken</a>
+	</div>
 {% endblock %}

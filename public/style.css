@@ -105,6 +105,9 @@ nav a:hover {
     cursor: pointer;
     background : radial-gradient(#76b2fe, #b69efe);
     transition: all 0.2s;
+    display : block; 
+    width : max-content; 
+    margin : .5rem;
 }
 
 .btn:hover, button:hover{
@@ -117,8 +120,8 @@ nav a:hover {
 .cat-list {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
-    margin-top: 5rem;
+    justify-content: space-evenly;
+    margin-top: 3rem;
 }
 
 .card {
@@ -135,6 +138,24 @@ nav a:hover {
 }
 
 .card:hover {
+    box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.4);
+    transform: scale(1.01);
+}
+
+.card-u {
+    margin: 20px;
+    padding: 20px;
+    width: 300px;
+    min-height: 200px;
+    display: grid;
+    grid-template-rows: 20px 50px 1fr 50px;
+    border-radius: 10px;
+    box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.25);
+    transition: all 0.2s;
+    background: radial-gradient(rgb(214, 90, 90), lightcoral);
+}
+
+.card-u:hover {
     box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.4);
     transform: scale(1.01);
 }
@@ -178,6 +199,24 @@ nav a:hover {
 
 .quest-single-div{
     display: block;
+}
+
+.reponse{
+    margin-top: 1rem;
+    border : none; 
+    border-radius: .25rem;
+    padding : .75rem; 
+    font-size : 1rem;
+    text-transform: uppercase;
+    cursor: pointer;
+    background : rgb(214, 90, 90);
+    transition: all 0.2s;
+    display: block;
+}
+
+.reponse:hover{
+    box-shadow: 0px 3px 3px rgba(0, 0, 0, 0.4);
+    transform: scale(1.01);
 }
 
 
