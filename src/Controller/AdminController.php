@@ -58,16 +58,16 @@ class AdminController extends AbstractController
         $d1 = $date->modify("-24 hour");
         $date = '';
         $date = new \DateTime();
-        $d2= $date->modify("-168 hour");
-        $date ='';
+        $d2 = $date->modify("-168 hour");
+        $date = '';
         $date = new \DateTime();
         $d3 = $date->modify("-1 month");
-        $date ='';
+        $date = '';
         $date = new \DateTime();
         $d4 = $date->modify("-1 Year");
 
         // $datesArray = ["00h-06h" => $d1,"06h-12h" => $d2,"12h-18h" => $d3,"18h-24h" => $d4];
-        $datesArray = [$d1,$d2,$d3,$d4];
+        $datesArray = [$d1, $d2, $d3, $d4];
         $counts = [];
         foreach ($datesArray as $key => $d) {
             $tmpCount = $this->getDoctrine()
@@ -85,43 +85,43 @@ class AdminController extends AbstractController
         // }
         foreach ($datesArray as $key => $d) {
             $Visiteur = $this->getDoctrine()
-            ->getRepository(Visiteur::class)
-            ->findVisiteurLastPeriod($d);
-            $Visiteurcount[$key]=$Visiteur;
+                ->getRepository(Visiteur::class)
+                ->findVisiteurLastPeriod($d);
+            $Visiteurcount[$key] = $Visiteur;
         }
         $arrayscore = [];
         $categoriestat = [];
         $arrayscoregraph = [];
-        $id_categorie=$this->getDoctrine()
-        ->getRepository(Categorie::class)
-        ->findAll();
-        for ($i=0; $i < count($id_categorie) ; $i++) {
-          $getscore=$this->getDoctrine()
-          ->getRepository(HistoriqueQuizz::class)
-          ->findBy([
-              'categorie'=>$id_categorie[$i]
-          ]);
-          $num = count($getscore);
-          $scorefinal = 0;
-          for ($J=0; $J < $num ; $J++) {
-            $scorefinal = $scorefinal + $getscore[$J]->getScore();
-          }
-          if($num!=0){
-          $scorefinal = $scorefinal / $num;
-          array_push($categoriestat,$id_categorie[$i]->name);
-          array_push($arrayscore,$id_categorie[$i]->name.' : '.$scorefinal);
-          array_push($arrayscoregraph,$scorefinal);
-          }
+        $id_categorie = $this->getDoctrine()
+            ->getRepository(Categorie::class)
+            ->findAll();
+        for ($i = 0; $i < count($id_categorie); $i++) {
+            $getscore = $this->getDoctrine()
+                ->getRepository(HistoriqueQuizz::class)
+                ->findBy([
+                    'categorie' => $id_categorie[$i]
+                ]);
+            $num = count($getscore);
+            $scorefinal = 0;
+            for ($J = 0; $J < $num; $J++) {
+                $scorefinal = $scorefinal + $getscore[$J]->getScore();
+            }
+            if ($num != 0) {
+                $scorefinal = $scorefinal / $num;
+                array_push($categoriestat, $id_categorie[$i]->name);
+                array_push($arrayscore, $id_categorie[$i]->name . ' : ' . $scorefinal);
+                array_push($arrayscoregraph, $scorefinal);
+            }
         }
         // var_dump($arrayscore);
         // var_dump($categoriestat);
         if ($this->testAdmin()) {
             return $this->render('admin/stats.html.twig', [
                 'label' => $counts,
-                'visiteur' =>$Visiteurcount,
-                'categorie' =>json_encode($categoriestat),
+                'visiteur' => $Visiteurcount,
+                'categorie' => json_encode($categoriestat),
                 'quizzgraphe' => json_encode($arrayscoregraph),
-                'quizz' =>$arrayscore,
+                'quizz' => $arrayscore,
             ]);
         } else {
             return $this->redirectToRoute("categorie_index");
@@ -188,6 +188,7 @@ class AdminController extends AbstractController
     public function edit(Request $request, User $user, UserPasswordHasherInterface $userPasswordHasherInterface): Response
     {
         if ($this->testAdmin()) {
+            dd($user);
             $form = $this->createForm(UserType::class, $user);
             $form->handleRequest($request);
             $roles = $user->getRoles();
@@ -268,47 +269,54 @@ class AdminController extends AbstractController
     {
         if ($this->testAdmin()) {
             $this->denyAccessUnlessGranted("IS_AUTHENTICATED_FULLY");
-        $user = $this->get('security.token_storage')->getToken()->getUser();
-        if ($user->isVerified()) {
-            $categorie = new Categorie();
-            $questions = [];
-            $reponses = [];
-            for ($i = 0; $i < 10; $i++) {
-                $q = new Question();
-                $r1 = new Reponse();
-                $r2 = new Reponse();
-                $r3 = new Reponse();
-                $q->addReponse($r1);
-                $q->addReponse($r2);
-                $q->addReponse($r3);
-                array_push($questions, $q);
-                array_push($reponses, $r1, $r2, $r3);
-                $categorie->addCategorie($q);
-            }
-
-            $form = $this->createForm(CategorieType::class, $categorie);
-            $form->handleRequest($request);
-
-            if ($form->isSubmitted() && $form->isValid()) {
-                $entityManager = $this->getDoctrine()->getManager();
-                $entityManager->persist($categorie);
-                foreach ($questions as $q) {
-                    $entityManager->persist($q);
+            $user = $this->get('security.token_storage')->getToken()->getUser();
+            if ($user->isVerified()) {
+                $categorie2 = new Categorie();
+                $categorie2->id = $categorie->id;
+                $categorie2->name = $categorie->name;
+                $allQuestions = $this->getDoctrine()
+                    ->getRepository(Question::class)
+                    ->findBy([
+                        "idCategorie" => $categorie->id,
+                    ]);
+                $answers = [];
+                for ($i = 0; $i < count($allQuestions); $i++) {
+                    $reponse = $this->getDoctrine()
+                        ->getRepository(Reponse::class)
+                        ->findBy([
+                            "idQuestion" => $allQuestions[$i],
+                        ]);
+                    array_push($answers, $reponse);
                 }
-                foreach ($reponses as $r) {
-                    $entityManager->persist($r);
+                for ($i = 0; $i < 10; $i++) {
+                    $allQuestions[$i]->addReponse($answers[$i][0]);
+                    $allQuestions[$i]->addReponse($answers[$i][1]);
+                    $allQuestions[$i]->addReponse($answers[$i][2]);
+                    $categorie2->addCategorie($allQuestions[$i]);
                 }
-                $entityManager->flush();
-                // $id = $this->getDoctrine()->getRepository(Categorie::class)->findBy(array(),array('id'=>'DESC'),1,0);
+                $form = $this->createForm(CategorieType::class, $categorie2);
+                $form->handleRequest($request);
 
-                return $this->redirectToRoute('admin_quizzes', [], Response::HTTP_SEE_OTHER);
+                if ($form->isSubmitted() && $form->isValid()) {
+                    $entityManager = $this->getDoctrine()->getManager();
+                    $entityManager->persist($categorie2);
+                    foreach ($allQuestions as $q) {
+                        $entityManager->persist($q);
+                    }
+                    foreach ($answers as $r) {
+                        $entityManager->persist($r);
+                    }
+                    $entityManager->flush();
+                    // $id = $this->getDoctrine()->getRepository(Categorie::class)->findBy(array(),array('id'=>'DESC'),1,0);
+
+                    return $this->redirectToRoute('admin_quizzes', [], Response::HTTP_SEE_OTHER);
+                }
+                return $this->renderForm('admin/editQuizz.html.twig', [
+                    'categorie' => $categorie2,
+                    'form' => $form,
+                ]);
             }
-            return $this->renderForm('admin/editQuizz.html.twig', [
-                'categorie' => $categorie,
-                'form' => $form,
-            ]);
-        }
-        return $this->redirectToRoute("app_verify_wait");
+            return $this->redirectToRoute("app_verify_wait");
         } else {
             return $this->redirectToRoute("categorie_index");
         }
