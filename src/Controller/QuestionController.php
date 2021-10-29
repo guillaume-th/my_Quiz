@@ -95,9 +95,36 @@ class QuestionController extends AbstractController
             $quizzfait = $this->getDoctrine()->getManager();
             $quizzfait->persist($quizz);
             $quizzfait->flush();
+            if ($idQuestion == NULL) {
+                $correctionquest = $this->getDoctrine()
+                    ->getRepository(Question::class)
+                    ->findBy([
+                        $qryCategorieId => $id,
+                    ]);
+            } else {
+                $correctionquest = $this->getDoctrine()
+                    ->getRepository(Question::class)
+                    ->findBy([
+                        $qryCategorieId => $id,
+                    ]);
+            }
+            $reponsecorrect=[];
+            for ($i=$tmpQuestion->id; $i < $tmpQuestion->id + 10 ; $i++) { 
+            $reponsetransit = $this->getDoctrine()
+            ->getRepository(Reponse::class)
+            ->findBy([
+                $qryQuestionId => $i,
+                'reponseExpected' => '1',
+            ]);
+            array_push($reponsecorrect,$reponsetransit);
+        }
+        // dd($reponsecorrect);
             return $this->render('question/score.html.twig', [
                 'count' => $count,
                 'categorie' => $id,
+                'categorieall' => $cat,
+                'reponse_correction' => $reponsecorrect,
+                'questions_correction' => $correctionquest,
             ]);
         } else {
             $reponses = $this->getDoctrine()

@@ -9,16 +9,20 @@
 	{% endblock %}
 
 	<div class="wrapper">
-		<h1>Score</h1>
-
+		<h1>{{categorieall.name}}</h1>
+		<h1>Votre score : </h1>
 		<table class="table">
 			<thead>
 				<tr>
-					<th>Votre score est de {{ count }}/10</th>
+					<h1>{{ count }}/10</h1>
 				</tr>
 			</thead>
+		<h1>Correction : </h1>
 			<tbody>
-			
+			{% for key, questions_corrections in questions_correction %}
+			<p>{{questions_corrections.question}}</p>
+			<p>{{reponse_correction[key].0.reponse}}</p>
+			{% endfor %}
 			</tbody>
 		</table>
 	</div>
